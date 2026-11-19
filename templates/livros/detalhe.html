@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ livro.titulo }} — Biblioteca{% endblock %}
+
+{% block content %}
+<section class="form-card detail-card">
+    <div class="row g-4 align-items-start">
+        <div class="col-md-4 text-center">
+            {% if livro.capa %}
+            <img class="cover-detail" src="{{ livro.capa.url }}" alt="Capa de {{ livro.titulo }}">
+            {% else %}
+            <div class="cover-detail-placeholder"><i class="bi bi-book"></i></div>
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <div class="eyebrow">Detalhes da obra</div>
+            <h1>{{ livro.titulo }}</h1>
+            <dl class="book-details">
+                <div><dt>Autor</dt><dd>{{ livro.autor }}</dd></div>
+                <div><dt>Ano de publicação</dt><dd>{{ livro.ano_publicacao }}</dd></div>
+                <div><dt>Páginas</dt><dd>{{ livro.paginas|default:'Não informado' }}</dd></div>
+                <div><dt>ISBN</dt><dd>{{ livro.isbn|default:'Não informado' }}</dd></div>
+                <div><dt>Disponibilidade</dt><dd>{% if livro.disponivel %}Disponível{% else %}Indisponível{% endif %}</dd></div>
+            </dl>
+            <div class="d-flex gap-2 mt-3">
+                <a class="btn btn-library" href="{% url 'livros:editar' livro.pk %}"><i class="bi bi-pencil-square me-1"></i>Editar</a>
+                <a class="btn btn-outline-secondary" href="{% url 'livros:lista' %}">Voltar</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

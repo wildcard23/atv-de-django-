@@ -1,0 +1,8 @@
+# Ambiente e arquivos locais
+.env
+db.sqlite3
+preview.sqlite3
+media/
+*.py[cod]
+__pycache__/
+.venv/

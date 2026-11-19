@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Sobre — Biblioteca{% endblock %}
+
+{% block content %}
+<section class="form-card detail-card">
+    <div class="eyebrow">Informações do acervo</div>
+    <h1>Sobre a biblioteca</h1>
+    <p class="text-secondary">Mini biblioteca desenvolvida em Django para cadastro, consulta, edição e exclusão de obras.</p>
+    <div class="row g-3 mt-2">
+        <div class="col-md-6">
+            <div class="acervo-card p-4 text-center">
+                <div class="eyebrow">Total de livros</div>
+                <h2 class="mt-2 mb-0">{{ total_livros }}</h2>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="acervo-card p-4 text-center">
+                <div class="eyebrow">Livros disponíveis</div>
+                <h2 class="mt-2 mb-0">{{ livros_disponiveis }}</h2>
+            </div>
+        </div>
+    </div>
+    <a class="btn btn-library mt-4" href="{% url 'livros:lista' %}">Voltar ao acervo</a>
+</section>
+{% endblock %}

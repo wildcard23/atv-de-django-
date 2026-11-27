@@ -23,7 +23,10 @@
                 <div><dt>Disponibilidade</dt><dd>{% if livro.disponivel %}Disponível{% else %}Indisponível{% endif %}</dd></div>
             </dl>
             <div class="d-flex gap-2 mt-3">
+                {% if livro.registered_by_id == user.id %}
                 <a class="btn btn-library" href="{% url 'livros:editar' livro.pk %}"><i class="bi bi-pencil-square me-1"></i>Editar</a>
+                <a class="btn btn-outline-danger" href="{% url 'livros:excluir' livro.pk %}"><i class="bi bi-trash3 me-1"></i>Excluir</a>
+                {% endif %}
                 <a class="btn btn-outline-secondary" href="{% url 'livros:lista' %}">Voltar</a>
             </div>
         </div>

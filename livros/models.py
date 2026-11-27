@@ -1,5 +1,6 @@
 from datetime import date
 
+from django.conf import settings
 from django.core.validators import MinLengthValidator, MinValueValidator, MaxValueValidator, RegexValidator, FileExtensionValidator
 from django.db import models
 
@@ -42,6 +43,14 @@ class Livro(models.Model):
         ],
     )
     disponivel = models.BooleanField(default=True, verbose_name='Disponível')
+    registered_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='livros',
+        blank=True,
+        null=True,
+        verbose_name='Cadastrado por',
+    )
 
     def __str__(self):
         return self.titulo

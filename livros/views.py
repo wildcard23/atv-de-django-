@@ -1,12 +1,13 @@
 from django.db.models import Q
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView
 
 from .forms import LivroModelForm
 from .models import Livro
 
 
-class LivroListView(ListView):
+class LivroListView(LoginRequiredMixin, ListView):
     model = Livro
     template_name = 'livros/lista.html'
     context_object_name = 'livros'
@@ -25,36 +26,46 @@ class LivroListView(ListView):
         return context
 
 
-class LivroDetailView(DetailView):
+class LivroDetailView(LoginRequiredMixin, DetailView):
     model = Livro
     template_name = 'livros/detalhe.html'
     context_object_name = 'livro'
 
 
-class LivroCreateView(CreateView):
+class LivroCreateView(LoginRequiredMixin, CreateView):
     model = Livro
     form_class = LivroModelForm
     template_name = 'livros/formulario.html'
     success_url = reverse_lazy('livros:lista')
     extra_context = {'titulo': 'Cadastrar livro'}
 
+    def form_valid(self, form):
+        form.instance.registered_by = self.request.user
+        return super().form_valid(form)
 
-class LivroUpdateView(UpdateView):
+
+class LivroUpdateView(LoginRequiredMixin, UpdateView):
     model = Livro
     form_class = LivroModelForm
     template_name = 'livros/formulario.html'
     success_url = reverse_lazy('livros:lista')
     extra_context = {'titulo': 'Editar livro'}
 
+    def get_queryset(self):
+        return super().get_queryset().filter(registered_by=self.request.user)
 
-class LivroDeleteView(DeleteView):
+
+class LivroDeleteView(LoginRequiredMixin, DeleteView):
     model = Livro
     template_name = 'livros/livro_confirm_delete.html'
     context_object_name = 'livro'
     success_url = reverse_lazy('livros:lista')
 
+    def get_queryset(self):
+        return super().get_queryset().filter(registered_by=self.request.user)
 
-class SobreView(TemplateView):
+
+class SobreView(LoginRequiredMixin, TemplateView):
     template_name = 'livros/sobre.html'
 
     def get_context_data(self, **kwargs):

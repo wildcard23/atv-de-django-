@@ -18,11 +18,23 @@
                 <span class="brand-mark"><i class="bi bi-book-half"></i></span>
                 <span><b>Acervo</b><small>Biblioteca</small></span>
             </a>
-            <div class="d-flex gap-2">
-                <a class="btn btn-outline-light btn-sm rounded-pill px-3" href="{% url 'livros:sobre' %}">Sobre</a>
-                <a class="btn btn-light btn-sm rounded-pill px-3" href="{% url 'livros:criar' %}">
-                    <i class="bi bi-plus-lg me-1"></i> Novo livro
-                </a>
+            <div class="d-flex align-items-center gap-2">
+                {% if user.is_authenticated %}
+                    <a class="nav-about btn btn-outline-light btn-sm rounded-pill px-3" href="{% url 'livros:sobre' %}">Sobre</a>
+                    <a class="btn btn-light btn-sm rounded-pill px-3" href="{% url 'livros:criar' %}">
+                        <i class="bi bi-plus-lg me-1"></i> Novo livro
+                    </a>
+                    <span class="user-greeting d-none d-md-inline">Olá, {{ user.get_full_name|default:user.get_username }}</span>
+                    <form method="post" action="{% url 'users:logout' %}" class="m-0">
+                        {% csrf_token %}
+                        <button class="btn btn-outline-light btn-sm rounded-pill px-3" type="submit">
+                            <i class="bi bi-box-arrow-right me-1"></i>Sair
+                        </button>
+                    </form>
+                {% else %}
+                    <a class="btn btn-outline-light btn-sm rounded-pill px-3" href="{% url 'users:login' %}">Entrar</a>
+                    <a class="btn btn-light btn-sm rounded-pill px-3" href="{% url 'users:signup' %}">Cadastre-se</a>
+                {% endif %}
             </div>
         </div>
     </header>

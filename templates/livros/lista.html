@@ -1,60 +1,80 @@
-<!doctype html>
-<html lang="pt-br">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Biblioteca</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="container py-4">
-    <h1>Biblioteca</h1>
-    <a class="btn btn-primary mb-3" href="{% url 'livros:criar' %}">Novo livro</a>
+{% extends 'base.html' %}
 
+{% block title %}Acervo de livros — Biblioteca{% endblock %}
+
+{% block content %}
+<section class="library-hero">
+    <div>
+        <div class="eyebrow">Um mundo de histórias</div>
+        <h1>Seu próximo capítulo<br><span>começa aqui.</span></h1>
+        <p>Explore, organize e encontre sua próxima leitura favorita.</p>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+        <i class="bi bi-book-half"></i>
+        <span class="hero-spark spark-one">✦</span>
+        <span class="hero-spark spark-two">✧</span>
+    </div>
+</section>
+
+<section class="collection-section">
     <div class="page-heading">
         <div>
             <div class="eyebrow">Coleção completa</div>
-            <h1>Acervo de livros</h1>
+            <h2>Acervo de livros <span class="result-count">{{ livros|length }}</span></h2>
         </div>
-        <form class="search-box" method="get">
-            <i class="bi bi-search"></i>
+        <form class="search-box" method="get" role="search">
+            <i class="bi bi-search" aria-hidden="true"></i>
             <input class="form-control" type="search" name="q" value="{{ busca }}" placeholder="Buscar título ou autor" aria-label="Buscar livros">
+            {% if busca %}<a class="search-clear" href="{% url 'livros:lista' %}" aria-label="Limpar busca"><i class="bi bi-x-lg"></i></a>{% endif %}
         </form>
     </div>
 
-    <section class="acervo-card">
+    <section class="acervo-card" aria-label="Lista de livros">
         <div class="acervo-head">
-            <div>Capa e título</div><div>Autor</div><div>Ano</div><div class="text-end">Ações</div>
+            <div>Capa e título</div><div>Autor</div><div>Ano</div><div>Disponibilidade</div><div class="text-end">Ações</div>
         </div>
         {% for livro in livros %}
         <article class="book-row">
-            <div class="d-flex align-items-center gap-3">
+            <div class="book-info">
                 {% if livro.capa %}
                 <img class="cover-thumb" src="{{ livro.capa.url }}" alt="Capa de {{ livro.titulo }}">
                 {% else %}
-                <span class="cover-placeholder"><i class="bi bi-book"></i></span>
+                <span class="cover-placeholder" aria-hidden="true"><i class="bi bi-book"></i></span>
                 {% endif %}
-                <a class="book-title text-decoration-none" href="{% url 'livros:detalhe' livro.pk %}">{{ livro.titulo }}</a>
+                <a class="book-title" href="{% url 'livros:detalhe' livro.pk %}">{{ livro.titulo }}</a>
             </div>
             <div class="book-author">{{ livro.autor }}</div>
             <div><span class="year">{{ livro.ano_publicacao }}</span></div>
+            <div>
+                {% if livro.disponivel %}
+                <span class="availability available"><i class="bi bi-check-circle-fill"></i> Disponível</span>
+                {% else %}
+                <span class="availability unavailable"><i class="bi bi-dash-circle-fill"></i> Emprestado</span>
+                {% endif %}
+            </div>
             <div class="actions">
-                <a class="action-btn action-edit" href="{% url 'livros:editar' livro.pk %}" title="Editar {{ livro.titulo }}"><i class="bi bi-pencil-square"></i></a>
-                <a class="action-btn action-delete" href="{% url 'livros:excluir' livro.pk %}" title="Excluir {{ livro.titulo }}"><i class="bi bi-trash3"></i></a>
+                {% if livro.registered_by_id == user.id %}
+                <a class="action-btn action-edit" href="{% url 'livros:editar' livro.pk %}" aria-label="Editar {{ livro.titulo }}" title="Editar"><i class="bi bi-pencil-square"></i></a>
+                <a class="action-btn action-delete" href="{% url 'livros:excluir' livro.pk %}" aria-label="Excluir {{ livro.titulo }}" title="Excluir"><i class="bi bi-trash3"></i></a>
+                {% else %}
+                <span class="actions-owner-note" title="Somente quem cadastrou pode alterar">Somente leitura</span>
+                {% endif %}
             </div>
         </article>
         {% empty %}
         <div class="empty-state">
-            <i class="bi bi-journal-bookmark"></i>
+            <span class="empty-icon"><i class="bi bi-journal-bookmark"></i></span>
             {% if busca %}
-            <h5>Nenhum resultado para “{{ busca }}”</h5>
-            <a class="btn btn-link" href="{% url 'livros:lista' %}">Limpar busca</a>
+            <h3>Nenhum resultado encontrado</h3>
+            <p>Não encontramos livros para “{{ busca }}”. Tente outro título ou autor.</p>
+            <a class="btn btn-outline-secondary rounded-pill px-4" href="{% url 'livros:lista' %}">Limpar busca</a>
             {% else %}
-            <h5>Seu acervo está vazio</h5>
-            <p>Comece cadastrando o primeiro livro da biblioteca.</p>
-            <a class="btn btn-library" href="{% url 'livros:criar' %}"><i class="bi bi-plus-lg me-1"></i>Cadastrar livro</a>
+            <h3>Uma história começa com a primeira página.</h3>
+            <p>Seu acervo ainda está vazio. Que tal adicionar o primeiro livro?</p>
+            <a class="btn btn-library" href="{% url 'livros:criar' %}"><i class="bi bi-plus-lg me-1"></i>Cadastrar primeiro livro</a>
             {% endif %}
         </div>
         {% endfor %}
     </section>
-</body>
-</html>
+</section>
+{% endblock %}
